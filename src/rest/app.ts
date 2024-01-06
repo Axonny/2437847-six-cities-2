@@ -9,6 +9,7 @@ import express, { Express } from 'express';
 import { ExceptionFilterInterface } from './exceptions/exeption-filter.interface';
 import { BaseController } from './controller/base-controller.js';
 import { AuthenticateMiddleware } from './middleware/authenticate.js';
+import cors from 'cors';
 
 @injectable()
 export default class Application {
@@ -46,6 +47,7 @@ export default class Application {
     this.server.use(express.json());
     const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+    this.server.use(cors());
   }
 
   private async _initExceptionFilters() {
