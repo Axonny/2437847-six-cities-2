@@ -1,6 +1,5 @@
 import { User } from '../../types/user.js';
 import typegoose, { defaultClasses, getModelForClass } from '@typegoose/typegoose';
-import { UserType } from '../../types/enums.js';
 import { createSHA256 } from '../../core/helpers/common.js';
 
 const { prop, modelOptions } = typegoose;
@@ -22,7 +21,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     default: '',
     match: [/.*\.(?:jpg|png)/, 'Avatar must be jpg or png'],
   })
-  public avatar?: string;
+  public avatarUrl?: string;
 
   @prop({
     required: true,
@@ -34,10 +33,9 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
   @prop({
     required: true,
-    type: () => String,
-    enum: UserType,
+    type: () => Boolean,
   })
-  public type: UserType;
+  public isPro: boolean;
 
   @prop({
     required: true,
@@ -56,9 +54,9 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     super();
 
     this.email = userData.email;
-    this.avatar = userData.avatar;
+    this.avatarUrl = userData.avatarUrl;
     this.name = userData.name;
-    this.type = userData.type;
+    this.isPro = userData.isPro;
   }
 
   public setPassword(password: string, salt?: string) {

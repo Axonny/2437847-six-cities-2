@@ -18,7 +18,7 @@ export default class OfferService implements OfferServiceInterface {
 
   public async create(dto: CreateOfferRequest): Promise<DocumentType<OfferEntity>> {
     const result = await this.offerModel.create(dto);
-    this.logger.info(`New offer was created: ${dto.name}`);
+    this.logger.info(`New offer was created: ${dto.title}`);
     return result;
   }
 
@@ -28,11 +28,11 @@ export default class OfferService implements OfferServiceInterface {
 
   public async find(count: number | undefined): Promise<DocumentType<OfferEntity>[]> {
     const limit = count ?? MAX_OFFERS_COUNT;
-    return this.offerModel.find().sort({ createdAt: SortType.DESCENDING }).populate('userId').limit(limit).exec();
+    return this.offerModel.find().sort({ createdAt: SortType.DESCENDING }).populate('host').limit(limit).exec();
   }
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(offerId).populate('userId').exec();
+    return this.offerModel.findById(offerId).populate('host').exec();
   }
 
   public async findPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]> {
@@ -40,7 +40,7 @@ export default class OfferService implements OfferServiceInterface {
       .find({ city: city, premium: true })
       .sort({ createdAt: SortType.DESCENDING })
       .limit(MAX_PREMIUM_OFFERS_COUNT)
-      .populate('userId')
+      .populate('host')
       .exec();
   }
 
@@ -55,7 +55,7 @@ export default class OfferService implements OfferServiceInterface {
   }
 
   public async updateById(offerId: string, dto: UpdateOfferRequest): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findByIdAndUpdate(offerId, dto, { new: true }).populate('userId').exec();
+    return this.offerModel.findByIdAndUpdate(offerId, dto, { new: true }).populate('host').exec();
   }
 
   public async updateRating(offerId: string, rating: number): Promise<void> {

@@ -1,6 +1,6 @@
 import { MockData } from '../../types/mock-data.js';
 import { generateRandomNumber, getRandomItem, getRandomItems } from './random.js';
-import { City, Facilities, HousingType, UserType } from '../../types/enums.js';
+import { City, Facilities, HousingType } from '../../types/enums.js';
 import dayjs from 'dayjs';
 import { Offer } from '../../types/offer.js';
 
@@ -13,7 +13,7 @@ const MAX_COUNT_ROOM = 5;
 const MIN_GUESTS_NUMBER = 1;
 const MAX_GUESTS_NUMBER = 10;
 const MIN_RENTAL_COST = 1000;
-const MAX_RENTAL_COST = 1000000;
+const MAX_RENTAL_COST = 100000;
 
 const getAllValuesFromEnum = (enumObject: object): string[] =>
   Object.values(enumObject).filter((value) => isNaN(Number(value)));
@@ -28,18 +28,18 @@ export const generateOffer = (mockData: MockData): string => {
   const premium = getRandomItem<string>(['true', 'false']);
   const favorite = getRandomItem<string>(['true', 'false']);
   const rating = generateRandomNumber(MIN_RATING, MAX_RATING, 1);
-  const housingType = getRandomItem(getAllValuesFromEnum(HousingType));
+  const type = getRandomItem(getAllValuesFromEnum(HousingType));
   const roomCount = generateRandomNumber(MIN_COUNT_ROOM, MAX_COUNT_ROOM);
   const guestCount = generateRandomNumber(MIN_GUESTS_NUMBER, MAX_GUESTS_NUMBER);
   const cost = generateRandomNumber(MIN_RENTAL_COST, MAX_RENTAL_COST);
   const facilities = getRandomItems(getAllValuesFromEnum(Facilities));
   const offerAuthorName = getRandomItem<string>(mockData.users.names);
   const offerAuthorAvatar = getRandomItem<string>(mockData.users.avatars);
-  const offerAuthorType = getRandomItem(getAllValuesFromEnum(UserType));
+  const offerAuthorIsPro = getRandomItem<boolean>([true, false]);
   const offerAuthorNameEmail = getRandomItem<string>(mockData.users.emails);
   const commentsCount = generateRandomNumber(1, 10);
-  const latitude = getRandomItem<number>(mockData.coordinates.latitude);
-  const longitude = getRandomItem<number>(mockData.coordinates.longitude);
+  const latitude = getRandomItem<number>(mockData.location.latitude);
+  const longitude = getRandomItem<number>(mockData.location.longitude);
 
   return [
     title,
@@ -51,13 +51,13 @@ export const generateOffer = (mockData: MockData): string => {
     premium,
     favorite,
     rating,
-    housingType,
+    type,
     roomCount,
     guestCount,
     facilities,
     offerAuthorName,
     offerAuthorAvatar,
-    offerAuthorType,
+    offerAuthorIsPro,
     offerAuthorNameEmail,
     commentsCount,
     latitude,
@@ -78,13 +78,13 @@ export const parseOffer = (offerString: string): Offer => {
     premium,
     favorite,
     rating,
-    housingType,
+    type,
     roomCount,
     guestCount,
     facilities,
     authorName,
     authorAvatar,
-    authorType,
+    authorIsPro,
     authorEmail,
     commentsCount,
     latitude,
@@ -92,28 +92,28 @@ export const parseOffer = (offerString: string): Offer => {
     cost,
   ] = offerRow;
   return {
-    name: title,
+    title: title,
     description: description,
     publicationDate: new Date(publicationDate),
     city: city as unknown as City,
     previewImage: preview,
     images: images.split(','),
-    premium: premium as unknown as boolean,
+    isPremium: premium as unknown as boolean,
     isFavourite: favorite as unknown as boolean,
     rating: parseFloat(rating),
-    housingType: housingType as unknown as HousingType,
-    roomCount: parseInt(roomCount, 10),
-    guestCount: parseInt(guestCount, 10),
-    cost: parseInt(cost, 10),
-    facilities: facilities.split(',').map((x) => x as unknown as Facilities),
-    userId: {
+    type: type as unknown as HousingType,
+    bedrooms: parseInt(roomCount, 10),
+    maxAdults: parseInt(guestCount, 10),
+    price: parseInt(cost, 10),
+    goods: facilities.split(',').map((x) => x as unknown as Facilities),
+    host: {
       name: authorName,
-      avatar: authorAvatar,
-      type: authorType as unknown as UserType,
+      avatarUrl: authorAvatar,
+      isPro: authorIsPro === 'true',
       email: authorEmail,
     },
     commentsCount: parseInt(commentsCount, 10),
-    coordinates: {
+    location: {
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
     },

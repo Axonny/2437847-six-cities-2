@@ -38,7 +38,7 @@ export default class CommentController extends BaseController {
     const comment = await this.commentService.createForOffer({
       ...body,
       offerId: params.offerId,
-      userId: user.id,
+      host: user.id,
     });
     this.created(res, plainToInstance(CommentResponse, comment, { excludeExtraneousValues: true }));
   }

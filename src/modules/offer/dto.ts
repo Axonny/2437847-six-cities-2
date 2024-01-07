@@ -17,9 +17,9 @@ import { Expose, Type } from 'class-transformer';
 import { UserResponse } from '../user/dto.js';
 
 export class CreateOfferRequest {
-  @MinLength(10, { message: 'Min length for name is 10' })
-  @MaxLength(100, { message: 'Max length for name is 100' })
-  public name!: string;
+  @MinLength(10, { message: 'Min length for title is 10' })
+  @MaxLength(100, { message: 'Max length for title is 100' })
+  public title!: string;
 
   @MinLength(20, { message: 'Min length for description is 20' })
   @MaxLength(1024, { message: 'Max length for description is 1024' })
@@ -35,40 +35,40 @@ export class CreateOfferRequest {
   @IsString({ each: true, message: 'image path should be string' })
   public images!: string[];
 
-  @IsBoolean({ message: 'field premium must be boolean' })
-  public premium!: boolean;
+  @IsBoolean({ message: 'field isPremium must be boolean' })
+  public isPremium!: boolean;
 
   @IsEnum(HousingType, { message: 'type must be one of the housing types' })
-  public housingType!: HousingType;
+  public type!: HousingType;
 
   @Min(1, { message: 'Min count of rooms is 1' })
   @Max(8, { message: 'Max count of rooms is 8' })
-  public roomCount!: number;
+  public bedrooms!: number;
 
   @Min(1, { message: 'Min count of guests is 1' })
   @Max(10, { message: 'Max count of guests is 10' })
-  public guestCount!: number;
+  public maxAdults!: number;
 
-  @Min(100, { message: 'Min cost is 100' })
-  @Max(100000, { message: 'Max cost is 100000' })
-  public cost!: number;
+  @Min(100, { message: 'Min price is 100' })
+  @Max(100000, { message: 'Max price is 100000' })
+  public price!: number;
 
-  @IsArray({ message: 'field facilities must be an array' })
-  @IsEnum(Facilities, { each: true, message: 'type must be one of the facilities' })
+  @IsArray({ message: 'field goods must be an array' })
+  @IsEnum(Facilities, { each: true, message: 'type must be one of the goods' })
   @ArrayNotEmpty({ message: 'There should be at least 1 facility' })
-  public facilities!: Facilities[];
+  public goods!: Facilities[];
 
-  public userId!: string;
+  public host!: string;
 
   @IsObject({ message: 'There should be object CoordinatesType' })
-  public coordinates!: Coordinates;
+  public location!: Coordinates;
 }
 
 export class UpdateOfferRequest {
   @IsOptional()
-  @MinLength(10, { message: 'Min length for name is 10' })
-  @MaxLength(100, { message: 'Max length for name is 100' })
-  public name?: string;
+  @MinLength(10, { message: 'Min length for title is 10' })
+  @MaxLength(100, { message: 'Max length for title is 100' })
+  public title?: string;
 
   @IsOptional()
   @MinLength(20, { message: 'Min length for description is 20' })
@@ -89,37 +89,37 @@ export class UpdateOfferRequest {
   public images?: string[];
 
   @IsOptional()
-  @IsBoolean({ message: 'field premium must be boolean' })
-  public premium?: boolean;
+  @IsBoolean({ message: 'field isPremium must be boolean' })
+  public isPremium?: boolean;
 
   @IsOptional()
   @IsEnum(HousingType, { message: 'type must be one of the housing types' })
-  public housingType?: HousingType;
+  public type?: HousingType;
 
   @IsOptional()
   @Min(1, { message: 'Min count of rooms is 1' })
   @Max(8, { message: 'Max count of rooms is 8' })
-  public roomCount?: number;
+  public bedrooms?: number;
 
   @IsOptional()
   @Min(1, { message: 'Min count of guests is 1' })
   @Max(10, { message: 'Max count of guests is 10' })
-  public guestCount?: number;
+  public maxAdults?: number;
 
   @IsOptional()
-  @Min(100, { message: 'Min cost is 100' })
-  @Max(100000, { message: 'Max cost is 100000' })
-  public cost?: number;
+  @Min(100, { message: 'Min price is 100' })
+  @Max(100000, { message: 'Max price is 100000' })
+  public price?: number;
 
   @IsOptional()
-  @IsArray({ message: 'field facilities must be an array' })
-  @IsEnum(Facilities, { each: true, message: 'type must be one of the facilities' })
+  @IsArray({ message: 'field goods must be an array' })
+  @IsEnum(Facilities, { each: true, message: 'type must be one of the goods' })
   @ArrayNotEmpty({ message: 'There should be at least 1 facility' })
-  public facilities?: Facilities[];
+  public goods?: Facilities[];
 
   @IsOptional()
   @IsObject({ message: 'There should be object CoordinatesType' })
-  public coordinates?: Coordinates;
+  public location?: Coordinates;
 }
 
 export class OfferResponse {
@@ -127,7 +127,7 @@ export class OfferResponse {
   public id!: string;
 
   @Expose()
-  name!: string;
+  title!: string;
 
   @Expose()
   publicationDate!: Date;
@@ -145,38 +145,38 @@ export class OfferResponse {
   images!: string[];
 
   @Expose()
-  premium!: boolean;
+  isPremium!: boolean;
 
   @Expose()
-  favorite!: boolean;
+  isFavourite!: boolean;
 
   @Expose()
   rating!: number;
 
   @Expose()
-  housingType!: HousingType;
+  type!: HousingType;
 
   @Expose()
-  cost!: number;
+  price!: number;
 
   @Expose()
   commentsCount!: number;
 
   @Expose()
-  roomCount!: number;
+  bedrooms!: number;
 
   @Expose()
-  guestCount!: number;
+  maxAdults!: number;
 
   @Expose()
-  facilities!: Facilities[];
+  goods!: Facilities[];
 
-  @Expose({ name: 'userId' })
+  @Expose({ name: 'host' })
   @Type(() => UserResponse)
-  offerAuthor!: UserResponse;
+  host!: UserResponse;
 
   @Expose()
-  coordinates!: Coordinates;
+  location!: Coordinates;
 }
 
 export class FavoriteOfferShortResponse {
@@ -184,7 +184,7 @@ export class FavoriteOfferShortResponse {
   public id!: string;
 
   @Expose()
-  name!: string;
+  title!: string;
 
   @Expose()
   publicationDate!: Date;
@@ -196,18 +196,18 @@ export class FavoriteOfferShortResponse {
   previewImage!: string;
 
   @Expose()
-  premium!: boolean;
+  isPremium!: boolean;
 
-  favorite = true;
+  isFavourite = true;
 
   @Expose()
   rating!: number;
 
   @Expose()
-  housingType!: HousingType;
+  type!: HousingType;
 
   @Expose()
-  cost!: number;
+  price!: number;
 
   @Expose()
   commentsCount!: number;

@@ -32,7 +32,7 @@ export default class CommentResponse {
   @Expose({ name: 'createdAt' })
   public postDate!: string;
 
-  @Expose({ name: 'userId' })
+  @Expose({ name: 'host' })
   @Type(() => UserResponse)
   public user!: UserResponse;
 }

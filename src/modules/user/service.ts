@@ -5,7 +5,6 @@ import { AppComponents } from '../../types/app-components.js';
 import { UserEntity } from './entity.js';
 import { CreateUserRequest, LoginUserRequest } from './dto.js';
 import { DocumentType, types } from '@typegoose/typegoose';
-import { UserType } from '../../types/enums.js';
 import { ConfigInterface } from '../../core/config/config.interface';
 import { RestSchema } from '../../core/config/rest.schema';
 import { OfferEntity } from '../offer/entity.js';
@@ -19,7 +18,7 @@ export default class UserService implements UserServiceInterface {
   ) {}
 
   public async create(dto: CreateUserRequest): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity({ ...dto, type: UserType.STANDART });
+    const user = new UserEntity({ ...dto });
     user.setPassword(dto.password, this.config.get('SALT'));
 
     const result = await this.userModel.create(user);

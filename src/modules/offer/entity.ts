@@ -27,10 +27,10 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({
     required: true,
     type: () => Number,
-    min: [100, 'Min cost is 100'],
-    max: [100000, 'Max cost is 100000'],
+    min: [100, 'Min price is 100'],
+    max: [100000, 'Max price is 100000'],
   })
-  public cost!: number;
+  public price!: number;
 
   @prop({
     required: true,
@@ -46,7 +46,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     type: () => String,
     enum: Facilities,
   })
-  public facilities!: Facilities[];
+  public goods!: Facilities[];
 
   @prop({
     required: true,
@@ -54,14 +54,14 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     min: [1, 'Min count of guests is 1'],
     max: [10, 'Max count of guests is 10'],
   })
-  public guestCount!: number;
+  public maxAdults!: number;
 
   @prop({
     required: true,
     type: () => String,
     enum: HousingType,
   })
-  public housingType!: HousingType;
+  public type!: HousingType;
 
   @prop({
     type: () => [String],
@@ -74,19 +74,19 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     required: true,
     trim: true,
     type: () => String,
-    minlength: [10, 'Min length for name is 10'],
-    maxlength: [100, 'Max length for name is 15'],
+    minlength: [10, 'Min length for title is 10'],
+    maxlength: [100, 'Max length for title is 100'],
   })
-  public name!: string;
+  public title!: string;
 
   @prop({
     ref: UserEntity,
     required: true,
   })
-  public userId!: Ref<UserEntity>;
+  public host!: Ref<UserEntity>;
 
   @prop({ required: true, default: false, type: () => Boolean })
-  public premium!: boolean;
+  public isPremium!: boolean;
 
   @prop({ required: true, type: () => String })
   public previewImage!: string;
@@ -108,14 +108,14 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     min: [1, 'Min room count is 1'],
     max: [8, 'Max room count is 8'],
   })
-  public roomCount!: number;
+  public bedrooms!: number;
 
   @prop({
     required: true,
     type: () => mongoose.Schema.Types.Mixed,
     allowMixed: Severity.ALLOW,
   })
-  public coordinates!: Coordinates;
+  public location!: Coordinates;
 }
 
 export const OfferModel = getModelForClass(OfferEntity);

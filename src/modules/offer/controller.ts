@@ -8,7 +8,6 @@ import { UserServiceInterface } from '../user/interface.js';
 import { CommentServiceInterface } from '../comments/interface.js';
 import { HttpMethod } from '../../rest/types/http-method.js';
 import { ValidateDtoMiddleware } from '../../rest/middleware/validate-request.js';
-import { CreateCommentRequest } from '../comments/dto.js';
 import { ValidateObjectIdMiddleware } from '../../rest/middleware/validate-object-id.js';
 import { DocumentExistsMiddleware } from '../../rest/middleware/document-exists.js';
 import { CreateOfferRequest, FavoriteOfferShortResponse, OfferResponse, UpdateOfferRequest } from './dto.js';
@@ -48,7 +47,7 @@ export default class OfferController extends BaseController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateCommentRequest)],
+      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateOfferRequest)],
     });
 
     this.addRoute({
