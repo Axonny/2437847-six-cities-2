@@ -23,6 +23,7 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
   }
 
   public catch(error: Error | HttpError, req: Request, res: Response, next: NextFunction): void {
+    this.logger.error(error.message);
     if (error instanceof HttpError) {
       return this.handleHttpError(error, req, res, next);
     }

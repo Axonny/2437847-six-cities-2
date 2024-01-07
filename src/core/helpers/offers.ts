@@ -107,7 +107,7 @@ export const parseOffer = (offerString: string): Offer => {
     cost: parseInt(cost, 10),
     facilities: facilities.split(',').map((x) => x as unknown as Facilities),
     userId: {
-      username: authorName,
+      name: authorName,
       avatar: authorAvatar,
       type: authorType as unknown as UserType,
       email: authorEmail,

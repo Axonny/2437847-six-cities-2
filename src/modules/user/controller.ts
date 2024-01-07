@@ -93,8 +93,12 @@ export default class UserController extends BaseController {
     );
   }
 
-  public async checkAuthenticate({ user: { email } }: Request, res: Response) {
-    const foundedUser = await this.userService.findByEmail(email);
+  public async checkAuthenticate({ user }: Request, res: Response) {
+    this.logger.info(`Check authenticate for user: ${user?.email}`);
+    if (!user) {
+      throw new HttpError(StatusCodes.UNAUTHORIZED, 'Unauthorized', 'UserController');
+    }
+    const foundedUser = await this.userService.findByEmail(user.email);
 
     if (!foundedUser) {
       throw new HttpError(StatusCodes.UNAUTHORIZED, 'Unauthorized', 'UserController');

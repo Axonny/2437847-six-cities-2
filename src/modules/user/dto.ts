@@ -9,7 +9,7 @@ export class CreateUserRequest {
 
   @Length(1, 15, { message: 'Username length should be from 1 to 15.' })
   @IsString({ message: 'Username is required.' })
-  public username!: string;
+  public name!: string;
 
   @IsEnum(UserType, { message: 'type must be one of the user type' })
   public type!: UserType;
@@ -43,7 +43,7 @@ export class UserResponse {
   public id!: string;
 
   @Expose()
-  public username!: string;
+  public name!: string;
 
   @Expose()
   public email!: string;

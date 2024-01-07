@@ -45,9 +45,9 @@ export default class Application {
 
   private async _initMiddlewares() {
     this.server.use(express.json());
+    this.server.use(cors());
     const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
-    this.server.use(cors());
   }
 
   private async _initExceptionFilters() {
@@ -56,7 +56,7 @@ export default class Application {
 
   private async _initRoutes() {
     this.server.use('/offers', this.offerController.router);
-    this.server.use('/users', this.userController.router);
+    this.server.use('/', this.userController.router);
     this.server.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY')));
   }
 
@@ -68,8 +68,8 @@ export default class Application {
     this.logger.info('Init database completed');
 
     this.logger.info('Try to init server...');
-    await this._initRoutes();
     await this._initMiddlewares();
+    await this._initRoutes();
     await this._initExceptionFilters();
     await this._initServer();
     this.logger.info(`🚀 Server started on http://localhost:${this.config.get('PORT')}`);
