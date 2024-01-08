@@ -120,6 +120,10 @@ export class UpdateOfferRequest {
   @IsOptional()
   @IsObject({ message: 'There should be object CoordinatesType' })
   public location?: Coordinates;
+
+  @IsOptional()
+  @IsString({ message: 'host should be string' })
+  public host?: string;
 }
 
 export class OfferResponse {
@@ -129,7 +133,7 @@ export class OfferResponse {
   @Expose()
   title!: string;
 
-  @Expose()
+  @Expose({ name: 'createdAt' })
   publicationDate!: Date;
 
   @Expose()
