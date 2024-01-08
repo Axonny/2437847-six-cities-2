@@ -14,6 +14,8 @@ import { CreateOfferRequest, FavoriteOfferShortResponse, OfferResponse, UpdateOf
 import { plainToInstance } from 'class-transformer';
 import { ParamsDictionary } from 'express-serve-static-core';
 import { PrivateRouteMiddleware } from '../../rest/middleware/private-route.js';
+import { HttpError } from '../../rest/exceptions/http-error.js';
+import { StatusCodes } from 'http-status-codes';
 
 export type ParamsOffer =
   | {
@@ -117,9 +119,10 @@ export default class OfferController extends BaseController {
   }
 
   public async create(
-    { body }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferRequest>,
+    { body, user }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferRequest>,
     res: Response,
   ): Promise<void> {
+    body.host = user.id;
     const result = await this.offerService.create(body);
     this.created(res, result);
   }
@@ -133,11 +136,18 @@ export default class OfferController extends BaseController {
   }
 
   public async update(
-    { params, body }: Request<ParamsOffer, unknown, UpdateOfferRequest>,
+    { params, body, user }: Request<ParamsOffer, unknown, UpdateOfferRequest>,
     res: Response,
   ): Promise<void> {
+    const offer = await this.offerService.findById(params.offerId);
+    if (!offer) {
+      throw new HttpError(StatusCodes.NOT_FOUND, 'Offer not found');
+    }
+    if (offer.host.id.toString() !== user.id) {
+      throw new HttpError(StatusCodes.FORBIDDEN, 'Forbidden');
+    }
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
-    this.ok(res, updatedOffer);
+    this.ok(res, plainToInstance(OfferResponse, updatedOffer, { excludeExtraneousValues: true }));
   }
 
   public async delete({ params }: Request<ParamsOffer>, res: Response): Promise<void> {
