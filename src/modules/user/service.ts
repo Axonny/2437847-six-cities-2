@@ -83,4 +83,12 @@ export default class UserService implements UserServiceInterface {
 
     return null;
   }
+
+  public async saveAvatar(userId: string, avatarUrl: string): Promise<void> {
+    const user = await this.userModel.findById(userId);
+    if (user) {
+      user.avatarUrl = avatarUrl;
+      await user.save();
+    }
+  }
 }

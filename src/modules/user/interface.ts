@@ -12,4 +12,5 @@ export interface UserServiceInterface {
   addToFavoritesById(userId: string, offerId: string): Promise<void>;
   removeFromFavoritesById(userId: string, offerId: string): Promise<void>;
   verifyUser(dto: LoginUserRequest): Promise<DocumentType<UserEntity> | null>;
+  saveAvatar(userId: string, avatarUrl: string): Promise<void>;
 }

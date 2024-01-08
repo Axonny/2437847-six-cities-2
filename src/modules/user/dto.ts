@@ -35,6 +35,15 @@ export class LoginUserResponse {
 
   @Expose()
   public email!: string;
+
+  @Expose()
+  public name!: string;
+
+  @Expose()
+  public avatarUrl!: string;
+
+  @Expose()
+  public isPro!: boolean;
 }
 
 export class UserResponse {

@@ -9,7 +9,7 @@ import { UserServiceInterface } from './interface.js';
 import { AppComponents } from '../../types/app-components.js';
 import { HttpMethod } from '../../rest/types/http-method.js';
 import { HttpError } from '../../rest/exceptions/http-error.js';
-import { LoginUserResponse, CreateUserRequest, LoginUserRequest } from './dto.js';
+import { LoginUserResponse, CreateUserRequest, LoginUserRequest, UserResponse } from './dto.js';
 import { UploadFileMiddleware } from '../../rest/middleware/upload-file.js';
 import { ValidateObjectIdMiddleware } from '../../rest/middleware/validate-object-id.js';
 import { ConfigInterface } from '../../core/config/config.interface';
@@ -66,7 +66,7 @@ export default class UserController extends BaseController {
     }
 
     const result = await this.userService.create(body);
-    this.created(res, plainToInstance(CreateUserRequest, result, { excludeExtraneousValues: true }));
+    this.created(res, plainToInstance(UserResponse, result, { excludeExtraneousValues: true }));
   }
 
   public async login({ body }: LoginUserRequestType, res: Response): Promise<void> {
@@ -120,6 +120,8 @@ export default class UserController extends BaseController {
   }
 
   public async uploadAvatar(req: Request, res: Response) {
+    const { userId } = req.params;
+    await this.userService.saveAvatar(userId, req.file?.path || '');
     this.created(res, {
       filepath: req.file?.path,
     });
