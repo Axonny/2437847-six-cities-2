@@ -150,10 +150,17 @@ export default class OfferController extends BaseController {
     this.ok(res, plainToInstance(OfferResponse, updatedOffer, { excludeExtraneousValues: true }));
   }
 
-  public async delete({ params }: Request<ParamsOffer>, res: Response): Promise<void> {
+  public async delete({ params, user }: Request<ParamsOffer>, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(params.offerId);
+    if (!offer) {
+      throw new HttpError(StatusCodes.NOT_FOUND, 'Offer not found');
+    }
+    if (offer.host.id.toString() !== user.id) {
+      throw new HttpError(StatusCodes.FORBIDDEN, 'Forbidden');
+    }
     await this.offerService.deleteById(params.offerId);
     await this.commentService.deleteByOfferId(params.offerId);
-    this.noContent(res, `Предложение ${params.offerId} было удалено.`);
+    this.noContent(res, `Offer ${params.offerId} deleted`);
   }
 
   public async showPremium({ query }: Request<ParamsCity>, res: Response): Promise<void> {
