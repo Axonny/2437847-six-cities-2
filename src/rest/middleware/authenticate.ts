@@ -3,19 +3,17 @@ import { jwtVerify } from 'jose';
 import { StatusCodes } from 'http-status-codes';
 import { createSecretKey } from 'node:crypto';
 import { MiddlewareInterface } from './middleware.interface.js';
-import { HttpError } from '../exceptions/httpError.js';
+import { HttpError } from '../exceptions/http-error.js';
 
 export const BLACK_LIST_TOKENS: Set<string> = new Set();
 export class AuthenticateMiddleware implements MiddlewareInterface {
   constructor(private readonly jwtSecret: string) {}
 
   public async execute(req: Request, _res: Response, next: NextFunction): Promise<void> {
-    const authorizationHeader = req.headers?.authorization?.split(' ');
-    if (!authorizationHeader) {
+    const token = req.headers?.authorization;
+    if (!token) {
       return next();
     }
-
-    const [, token] = authorizationHeader;
 
     try {
       const { payload } = await jwtVerify(token, createSecretKey(this.jwtSecret, 'utf-8'), {

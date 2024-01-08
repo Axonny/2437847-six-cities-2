@@ -1,9 +1,7 @@
 import { User } from '../../types/user.js';
-import typegoose, { defaultClasses, getModelForClass } from '@typegoose/typegoose';
-import { UserType } from '../../types/enums.js';
+import typegoose, { defaultClasses, getModelForClass, Ref } from '@typegoose/typegoose';
 import { createSHA256 } from '../../core/helpers/common.js';
-import { ConfigInterface } from '../../core/config/config.interface.js';
-import { RestSchema } from '../../core/config/rest.schema.js';
+import { OfferEntity } from '../offer/entity.js';
 
 const { prop, modelOptions } = typegoose;
 
@@ -24,7 +22,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     default: '',
     match: [/.*\.(?:jpg|png)/, 'Avatar must be jpg or png'],
   })
-  public avatar?: string;
+  public avatarUrl?: string;
 
   @prop({
     required: true,
@@ -32,20 +30,16 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     minlength: [1, 'Min length for username is 1'],
     maxlength: [15, 'Max length for username is 15'],
   })
-  public username: string;
+  public name: string;
 
   @prop({
     required: true,
-    type: () => String,
-    enum: UserType,
+    type: () => Boolean,
   })
-  public type: UserType;
+  public isPro: boolean;
 
-  @prop({
-    required: true,
-    type: () => [String],
-  })
-  public favorite!: string[];
+  @prop({ required: true, ref: 'OfferEntity', default: [] })
+  public favorite!: Ref<OfferEntity>[];
 
   @prop({
     required: true,
@@ -54,28 +48,25 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   })
   private password?: string;
 
-  constructor(
-    userData: User,
-    private readonly config?: ConfigInterface<RestSchema>,
-  ) {
+  constructor(userData: User) {
     super();
 
     this.email = userData.email;
-    this.avatar = userData.avatar;
-    this.username = userData.username;
-    this.type = userData.type;
+    this.avatarUrl = userData.avatarUrl;
+    this.name = userData.name;
+    this.isPro = userData.isPro;
   }
 
-  public setPassword(password: string) {
-    this.password = createSHA256(password, this.config?.get('SALT') || '');
+  public setPassword(password: string, salt?: string) {
+    this.password = createSHA256(password, salt);
   }
 
   public getPassword() {
     return this.password;
   }
 
-  public verifyPassword(password: string) {
-    const hashPassword = createSHA256(password, this.config?.get('SALT') || '');
+  public verifyPassword(password: string, salt?: string) {
+    const hashPassword = createSHA256(password, salt);
     return hashPassword === this.password;
   }
 }

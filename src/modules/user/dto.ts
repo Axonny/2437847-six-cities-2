@@ -1,6 +1,5 @@
-import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
+import { IsBoolean, IsEmail, IsString, Length } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { UserType } from '../../types/enums.js';
 
 export class CreateUserRequest {
   @IsEmail({}, { message: 'Email must be valid.' })
@@ -9,10 +8,10 @@ export class CreateUserRequest {
 
   @Length(1, 15, { message: 'Username length should be from 1 to 15.' })
   @IsString({ message: 'Username is required.' })
-  public username!: string;
+  public name!: string;
 
-  @IsEnum(UserType, { message: 'type must be one of the user type' })
-  public type!: UserType;
+  @IsBoolean({ message: 'type must be boolean' })
+  public isPro!: boolean;
 
   @Length(6, 12, { message: 'Password length should be from 6 to 12.' })
   @IsString({ message: 'Password is required.' })
@@ -36,6 +35,15 @@ export class LoginUserResponse {
 
   @Expose()
   public email!: string;
+
+  @Expose()
+  public name!: string;
+
+  @Expose()
+  public avatarUrl!: string;
+
+  @Expose()
+  public isPro!: boolean;
 }
 
 export class UserResponse {
@@ -43,14 +51,14 @@ export class UserResponse {
   public id!: string;
 
   @Expose()
-  public username!: string;
+  public name!: string;
 
   @Expose()
   public email!: string;
 
   @Expose()
-  public avatar!: string;
+  public avatarUrl!: string;
 
   @Expose()
-  public type!: UserType;
+  public isPro!: boolean;
 }

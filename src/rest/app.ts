@@ -1,14 +1,15 @@
 import { LoggerInterface } from '../core/logger/logger.interface.js';
 import { ConfigInterface } from '../core/config/config.interface.js';
 import { RestSchema } from '../core/config/rest.schema.js';
-import { AppComponents } from '../types/appComponents.js';
+import { AppComponents } from '../types/app-components.js';
 import { inject, injectable } from 'inversify';
 import { getMongoConnectionString } from '../core/helpers/db.js';
 import { DatabaseClientInterface } from '../core/db.client/db.interface.js';
 import express, { Express } from 'express';
-import { ExceptionFilterInterface } from './exceptions/exeptionFilter.interface';
-import { BaseController } from './controller/baseController.js';
+import { ExceptionFilterInterface } from './exceptions/exeption-filter.interface';
+import { BaseController } from './controller/base-controller.js';
 import { AuthenticateMiddleware } from './middleware/authenticate.js';
+import cors from 'cors';
 
 @injectable()
 export default class Application {
@@ -21,6 +22,7 @@ export default class Application {
     @inject(AppComponents.ExceptionFilterInterface) private readonly exceptionFilter: ExceptionFilterInterface,
     @inject(AppComponents.UserController) private readonly userController: BaseController,
     @inject(AppComponents.OfferController) private readonly offerController: BaseController,
+    @inject(AppComponents.CommentController) private readonly commentController: BaseController,
   ) {
     this.server = express();
   }
@@ -44,6 +46,7 @@ export default class Application {
 
   private async _initMiddlewares() {
     this.server.use(express.json());
+    this.server.use(cors());
     const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
   }
@@ -53,8 +56,9 @@ export default class Application {
   }
 
   private async _initRoutes() {
-    this.server.use('/offers', this.offerController.router);
-    this.server.use('/users', this.userController.router);
+    this.server.use('/', this.userController.router);
+    this.server.use('/', this.offerController.router);
+    this.server.use('/comments', this.commentController.router);
     this.server.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY')));
   }
 
@@ -66,8 +70,8 @@ export default class Application {
     this.logger.info('Init database completed');
 
     this.logger.info('Try to init server...');
-    await this._initRoutes();
     await this._initMiddlewares();
+    await this._initRoutes();
     await this._initExceptionFilters();
     await this._initServer();
     this.logger.info(`🚀 Server started on http://localhost:${this.config.get('PORT')}`);

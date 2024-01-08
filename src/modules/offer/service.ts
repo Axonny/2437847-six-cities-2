@@ -3,7 +3,7 @@ import { OfferServiceInterface } from './interface.js';
 import { LoggerInterface } from '../../core/logger/logger.interface';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity } from './entity.js';
-import { AppComponents } from '../../types/appComponents.js';
+import { AppComponents } from '../../types/app-components.js';
 import { CreateOfferRequest, UpdateOfferRequest } from './dto.js';
 import { SortType } from '../common/types.js';
 
@@ -18,7 +18,7 @@ export default class OfferService implements OfferServiceInterface {
 
   public async create(dto: CreateOfferRequest): Promise<DocumentType<OfferEntity>> {
     const result = await this.offerModel.create(dto);
-    this.logger.info(`New offer was created: ${dto.name}`);
+    this.logger.info(`New offer was created: ${dto.title}`);
     return result;
   }
 
@@ -28,19 +28,19 @@ export default class OfferService implements OfferServiceInterface {
 
   public async find(count: number | undefined): Promise<DocumentType<OfferEntity>[]> {
     const limit = count ?? MAX_OFFERS_COUNT;
-    return this.offerModel.find().sort({ createdAt: SortType.DESCENDING }).populate('userId').limit(limit).exec();
+    return this.offerModel.find().sort({ createdAt: SortType.DESCENDING }).populate('host').limit(limit).exec();
   }
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(offerId).populate('userId').exec();
+    return this.offerModel.findById(offerId).populate('host').exec();
   }
 
   public async findPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
-      .find({ city: city, premium: true })
+      .find({ city: city, isPremium: true })
       .sort({ createdAt: SortType.DESCENDING })
       .limit(MAX_PREMIUM_OFFERS_COUNT)
-      .populate('userId')
+      .populate('host')
       .exec();
   }
 
@@ -55,7 +55,7 @@ export default class OfferService implements OfferServiceInterface {
   }
 
   public async updateById(offerId: string, dto: UpdateOfferRequest): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findByIdAndUpdate(offerId, dto, { new: true }).populate('userId').exec();
+    return this.offerModel.findByIdAndUpdate(offerId, dto, { new: true }).populate('host').exec();
   }
 
   public async updateRating(offerId: string, rating: number): Promise<void> {
@@ -64,5 +64,12 @@ export default class OfferService implements OfferServiceInterface {
 
   public async exists(documentId: string): Promise<boolean> {
     return (await this.offerModel.exists({ _id: documentId })) !== null;
+  }
+
+  public async findByIds(offerIds: string[]): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find({ _id: { $in: offerIds } })
+      .populate('host')
+      .exec();
   }
 }

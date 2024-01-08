@@ -3,7 +3,7 @@ export type MockData = {
   descriptions: string[];
   previewImages: string[];
   propertyImages: string[];
-  coordinates: {
+  location: {
     latitude: number[];
     longitude: number[];
   };

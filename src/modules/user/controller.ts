@@ -3,20 +3,20 @@ import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { plainToInstance } from 'class-transformer';
-import { BaseController } from '../../rest/controller/baseController.js';
+import { BaseController } from '../../rest/controller/base-controller.js';
 import { LoggerInterface } from '../../core/logger/logger.interface';
 import { UserServiceInterface } from './interface.js';
-import { AppComponents } from '../../types/appComponents.js';
-import { HttpMethod } from '../../rest/types/httpMethod.js';
-import { HttpError } from '../../rest/exceptions/httpError.js';
-import { LoginUserResponse, CreateUserRequest, LoginUserRequest } from './dto.js';
-import { UploadFileMiddleware } from '../../rest/middleware/uploadFile.js';
-import { ValidateObjectIdMiddleware } from '../../rest/middleware/validateObjectId.js';
+import { AppComponents } from '../../types/app-components.js';
+import { HttpMethod } from '../../rest/types/http-method.js';
+import { HttpError } from '../../rest/exceptions/http-error.js';
+import { LoginUserResponse, CreateUserRequest, LoginUserRequest, UserResponse } from './dto.js';
+import { UploadFileMiddleware } from '../../rest/middleware/upload-file.js';
+import { ValidateObjectIdMiddleware } from '../../rest/middleware/validate-object-id.js';
 import { ConfigInterface } from '../../core/config/config.interface';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { createJWT } from '../../core/helpers/jwt.js';
 import { BLACK_LIST_TOKENS } from '../../rest/middleware/authenticate.js';
-import { PrivateRouteMiddleware } from '../../rest/middleware/privateRoute.js';
+import { PrivateRouteMiddleware } from '../../rest/middleware/private-route.js';
 
 type LoginUserRequestType = Request<Record<string, unknown>, Record<string, unknown>, LoginUserRequest>;
 
@@ -66,7 +66,7 @@ export default class UserController extends BaseController {
     }
 
     const result = await this.userService.create(body);
-    this.created(res, plainToInstance(CreateUserRequest, result, { excludeExtraneousValues: true }));
+    this.created(res, plainToInstance(UserResponse, result, { excludeExtraneousValues: true }));
   }
 
   public async login({ body }: LoginUserRequestType, res: Response): Promise<void> {
@@ -93,8 +93,12 @@ export default class UserController extends BaseController {
     );
   }
 
-  public async checkAuthenticate({ user: { email } }: Request, res: Response) {
-    const foundedUser = await this.userService.findByEmail(email);
+  public async checkAuthenticate({ user }: Request, res: Response) {
+    this.logger.info(`Check authenticate for user: ${user?.email}`);
+    if (!user) {
+      throw new HttpError(StatusCodes.UNAUTHORIZED, 'Unauthorized', 'UserController');
+    }
+    const foundedUser = await this.userService.findByEmail(user.email);
 
     if (!foundedUser) {
       throw new HttpError(StatusCodes.UNAUTHORIZED, 'Unauthorized', 'UserController');
@@ -116,6 +120,8 @@ export default class UserController extends BaseController {
   }
 
   public async uploadAvatar(req: Request, res: Response) {
+    const { userId } = req.params;
+    await this.userService.saveAvatar(userId, req.file?.path || '');
     this.created(res, {
       filepath: req.file?.path,
     });

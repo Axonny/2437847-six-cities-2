@@ -7,21 +7,21 @@ export type Coordinates = {
 };
 
 export type Offer = {
-  name: string;
+  title: string;
   description: string;
   publicationDate: Date;
   city: City;
   previewImage: string;
   images: Array<string>;
-  premium: boolean;
+  isPremium: boolean;
   isFavourite: boolean;
   rating: number;
-  housingType: HousingType;
-  roomCount: number;
-  guestCount: number;
-  cost: number;
-  facilities: Array<Facilities>;
-  userId: User;
+  type: HousingType;
+  bedrooms: number;
+  maxAdults: number;
+  price: number;
+  goods: Array<Facilities>;
+  host: User;
   commentsCount: number;
-  coordinates: Coordinates;
+  location: Coordinates;
 };

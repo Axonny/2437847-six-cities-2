@@ -2,10 +2,11 @@ import { inject, injectable } from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { CommentServiceInterface } from './interface.js';
 import { CommentEntity } from './entity.js';
-import { CreateCommentRequest } from './dto.js';
+
 import { OfferServiceInterface } from '../offer/interface.js';
-import { AppComponents } from '../../types/appComponents.js';
+import { AppComponents } from '../../types/app-components.js';
 import { SortType } from '../common/types.js';
+import { Comment } from '../../types/comment.js';
 
 const COMMENTS_COUNT = 50;
 @injectable()
@@ -15,16 +16,16 @@ export default class CommentService implements CommentServiceInterface {
     @inject(AppComponents.OfferServiceInterface) private readonly offerService: OfferServiceInterface,
   ) {}
 
-  public async createForOffer(dto: CreateCommentRequest): Promise<DocumentType<CommentEntity>> {
+  public async createForOffer(dto: Comment): Promise<DocumentType<CommentEntity>> {
     const comment = await this.commentModel.create(dto);
     const offerId = dto.offerId;
     await this.offerService.incComment(offerId);
 
-    const allRating = this.commentModel.find({ offerId }).select('rating');
+    const allRating = await this.commentModel.find({ offerId }).select('rating').exec();
     const offer = await this.offerService.findById(offerId);
 
     const count = offer?.commentsCount ?? 1;
-    const newRating = allRating['rating'] / count;
+    const newRating = allRating.reduce((x, y) => x + y.rating, 0) / count;
     await this.offerService.updateRating(offerId, newRating);
     return comment.populate('authorId');
   }

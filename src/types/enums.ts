@@ -1,15 +1,10 @@
-export enum UserType {
-  STANDART = 'standart',
-  PRO = 'pro',
-}
-
 export enum City {
-  EKATERINBURG = 'Ekaterinburg',
-  TYUMEN = 'Tyumen',
-  TAMBOV = 'Tambov',
-  MAGADAN = 'Magadan',
-  VORKUTA = 'Vorkuta',
-  MOSCOW = 'Moscow',
+  PARIS = 'Paris',
+  COLOGNE = 'Cologne',
+  BRUSSELS = 'Brussels',
+  AMSTERDAM = 'Amsterdam',
+  HAMBURG = 'Hamburg',
+  DUSSELDORF = 'Dusseldorf',
 }
 
 export enum HousingType {

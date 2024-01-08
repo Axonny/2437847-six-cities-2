@@ -1,4 +1,4 @@
-import { ICliCommand } from './interfaces/ICliComand.js';
+import { ICliCommand } from './interfaces/сli-command.interface.js';
 import chalk from 'chalk';
 import { FileReader } from '../../core/file/file.service.js';
 import { Offer } from '../../types/offer.js';
@@ -61,13 +61,13 @@ export default class ImportCommand implements ICliCommand {
 
   private async saveOffer(offer: Offer) {
     const user = await this.userService.findOrCreate({
-      ...offer.userId,
+      ...offer.host,
       password: DEFAULT_USER_PASSWORD,
     });
 
     await this.offerService.create({
       ...offer,
-      userId: user.id,
+      host: user.id,
     });
   }
 }

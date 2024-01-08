@@ -19,10 +19,7 @@ export class CommentEntity extends defaultClasses.TimeStamps {
     minlength: [5, 'Min length for comment is 5'],
     maxlength: [1024, 'Max length for comment is 1024'],
   })
-  public text!: string;
-
-  @prop({ required: true, type: () => Date })
-  public publicationDate!: Date;
+  public comment!: string;
 
   @prop({
     ref: OfferEntity,
