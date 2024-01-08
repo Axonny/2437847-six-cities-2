@@ -37,7 +37,7 @@ export default class OfferService implements OfferServiceInterface {
 
   public async findPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]> {
     return this.offerModel
-      .find({ city: city, premium: true })
+      .find({ city: city, isPremium: true })
       .sort({ createdAt: SortType.DESCENDING })
       .limit(MAX_PREMIUM_OFFERS_COUNT)
       .populate('host')
@@ -64,5 +64,12 @@ export default class OfferService implements OfferServiceInterface {
 
   public async exists(documentId: string): Promise<boolean> {
     return (await this.offerModel.exists({ _id: documentId })) !== null;
+  }
+
+  public async findByIds(offerIds: string[]): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find({ _id: { $in: offerIds } })
+      .populate('host')
+      .exec();
   }
 }

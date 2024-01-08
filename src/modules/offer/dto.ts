@@ -148,7 +148,7 @@ export class OfferResponse {
   isPremium!: boolean;
 
   @Expose()
-  isFavourite!: boolean;
+  isFavorite!: boolean;
 
   @Expose()
   rating!: number;

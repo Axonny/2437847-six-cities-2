@@ -22,6 +22,7 @@ export default class Application {
     @inject(AppComponents.ExceptionFilterInterface) private readonly exceptionFilter: ExceptionFilterInterface,
     @inject(AppComponents.UserController) private readonly userController: BaseController,
     @inject(AppComponents.OfferController) private readonly offerController: BaseController,
+    @inject(AppComponents.CommentController) private readonly commentController: BaseController,
   ) {
     this.server = express();
   }
@@ -55,8 +56,9 @@ export default class Application {
   }
 
   private async _initRoutes() {
-    this.server.use('/offers', this.offerController.router);
     this.server.use('/', this.userController.router);
+    this.server.use('/', this.offerController.router);
+    this.server.use('/comments', this.commentController.router);
     this.server.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY')));
   }
 

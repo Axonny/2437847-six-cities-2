@@ -24,6 +24,12 @@ export default class CommentController extends BaseController {
 
     this.addRoute({
       path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.index,
+    });
+
+    this.addRoute({
+      path: '/:offerId',
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
@@ -34,12 +40,19 @@ export default class CommentController extends BaseController {
     });
   }
 
+  public async index({ params }: Request<ParamsOffer>, res: Response): Promise<void> {
+    const comments = await this.commentService.findByOfferId(params.offerId);
+    this.ok(res, plainToInstance(CommentResponse, comments, { excludeExtraneousValues: true }));
+  }
+
   public async create({ body, params, user }: Request<ParamsOffer>, res: Response): Promise<void> {
-    const comment = await this.commentService.createForOffer({
+    await this.commentService.createForOffer({
       ...body,
       offerId: params.offerId,
-      host: user.id,
+      authorId: user.id,
     });
-    this.created(res, plainToInstance(CommentResponse, comment, { excludeExtraneousValues: true }));
+
+    const comments = await this.commentService.findByOfferId(params.offerId);
+    this.ok(res, plainToInstance(CommentResponse, comments, { excludeExtraneousValues: true }));
   }
 }

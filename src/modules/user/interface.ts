@@ -1,6 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { UserEntity } from './entity.js';
-import { OfferEntity } from '../offer/entity.js';
 import { CreateUserRequest, LoginUserRequest } from './dto.js';
 
 export interface UserServiceInterface {
@@ -8,8 +7,9 @@ export interface UserServiceInterface {
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
   findOrCreate(dto: CreateUserRequest): Promise<DocumentType<UserEntity>>;
   findById(userId: string): Promise<DocumentType<UserEntity> | null>;
-  findFavorites(userId: string): Promise<DocumentType<OfferEntity>[]>;
-  addToFavoritesById(userId: string, offerId: string): Promise<DocumentType<OfferEntity>[] | null>;
-  removeFromFavoritesById(userId: string, offerId: string): Promise<DocumentType<OfferEntity>[] | null>;
+  findFavorites(userId: string): Promise<string[]>;
+  checkFavorite(userId: string, offerId: string): Promise<boolean>;
+  addToFavoritesById(userId: string, offerId: string): Promise<void>;
+  removeFromFavoritesById(userId: string, offerId: string): Promise<void>;
   verifyUser(dto: LoginUserRequest): Promise<DocumentType<UserEntity> | null>;
 }

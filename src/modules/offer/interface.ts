@@ -6,6 +6,7 @@ import { CreateOfferRequest, UpdateOfferRequest } from './dto.js';
 export interface OfferServiceInterface extends DocumentExistsInterface {
   create(dto: CreateOfferRequest): Promise<DocumentType<OfferEntity>>;
   findById(offerId: string): Promise<DocumentType<OfferEntity> | null>;
+  findByIds(offerIds: string[]): Promise<DocumentType<OfferEntity>[]>;
   find(count: number | undefined): Promise<DocumentType<OfferEntity>[]>;
   deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   updateById(offerId: string, dto: UpdateOfferRequest): Promise<DocumentType<OfferEntity> | null>;
